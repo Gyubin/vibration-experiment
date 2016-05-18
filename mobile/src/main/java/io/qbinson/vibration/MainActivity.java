@@ -1,14 +1,18 @@
 package io.qbinson.vibration;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -114,12 +118,29 @@ public class MainActivity extends AppCompatActivity
             case R.id.button2:
                 makeAlarm(true, 1);
                 break;
-            case R.id.button4:
+            case R.id.button3:
                 makeAlarm(true, 2);
                 break;
-            case R.id.button5:
+            case R.id.button4:
                 makeAlarm(true, 3);
                 break;
+            case R.id.button5:
+                makeAlarm(true, 4);
+                break;
+            case R.id.button6:
+                makeAlarm(true, 5);
+                break;
+
+            case R.id.button_none:
+                makeAlarm(false, 6);
+                break;
+            case R.id.button_weak:
+                makeAlarm(false, 7);
+                break;
+            case R.id.button_strong:
+                makeAlarm(false, 8);
+                break;
+
             case R.id.button_cancel:
                 makeAlarm(false, 9);
                 break;
@@ -139,14 +160,16 @@ public class MainActivity extends AppCompatActivity
             EditText pw = (EditText)findViewById(R.id.editText);
             pw.setEnabled(true);
 
-            // 공통 처리: CELL 버튼 모두 disable로 바꾸기. 터치한 버튼이라면 텍스트도 바꾸기.
-            int[] buttonIds = {R.id.button1, R.id.button2, R.id.button4, R.id.button5};
+            // 공통 처리: CELL 버튼 모두 disable 로 바꾸기. 터치한 버튼이라면 텍스트도 바꾸기.
+            int[] buttonIds = {R.id.button1, R.id.button2, R.id.button3, R.id.button4, R.id.button5, R.id.button6};
             Button startButton;
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 6; i++) {
                 startButton = (Button)findViewById(buttonIds[i]);
                 startButton.setEnabled(false);
                 if (cellNum == i) {
                     startButton.setText("진행 중...");
+                } else {
+                    startButton.setBackgroundColor(Color.parseColor("#4a4245"));
                 }
             }
 
@@ -160,8 +183,7 @@ public class MainActivity extends AppCompatActivity
             target.setTimeInMillis(System.currentTimeMillis());
 
             int[][] times = new int[][]{
-                    {13, 5}, {14, 1}, {15, 9}, {16, 22}, {17, 7}, {18, 9} // 진짜
-                    // {19, 11}, {19, 12}, {19, 13}, {19, 14}, {19, 15}, {19, 16}  // 테스트
+                    {13, 5}, {14, 1}, {15, 9}, {16, 22}, {17, 7}, {18, 9}
             };
             for (int[] time : times) {
                 Intent intent = new Intent(MainActivity.this, AlarmReceive.class);
@@ -183,48 +205,108 @@ public class MainActivity extends AppCompatActivity
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
 
-        // 중단 버튼을 눌렀을 때
+        // 테스트 혹은 중단 버튼을 눌렀을 때
         } else {
-            EditText pw = (EditText)findViewById(R.id.editText);
-            if (pw.getText().toString().equals("0948")) {
+            // none test
+            if (cellNum == 6) {
+                NotificationManager manager= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this);
 
-                // 공통 처리: CELL 버튼 모두 enabled로 바꾸기. 터치한 버튼이라면 텍스트도 바꾸기.
-                int[] buttonIds = {R.id.button1, R.id.button2, R.id.button4, R.id.button5};
-                String[] buttonTexts = {"CELL 1", "CELL 2", "CELL 4", "CELL 5"};
-                Button startButton;
-                for (int i = 0; i < 4; i++) {
-                    startButton = (Button)findViewById(buttonIds[i]);
-                    startButton.setEnabled(true);
-                    startButton.setText(buttonTexts[i]);
+                builder.setSmallIcon(R.mipmap.icon_none)
+                        .setTicker("진동 알림 발생")
+                        .setContentTitle("일어설 시간입니다.")
+                        .setContentText("일어서서 일 분 동안 몸을 움직이십시오.")
+                        .extend(new NotificationCompat.WearableExtender().setBackground(
+                                BitmapFactory.decodeResource(getResources(), R.mipmap.social_none)
+                        ));
+
+                builder.setVibrate(new long[] {0, 100, 140, 150, 700, 100, 140, 150, 700, 100, 140, 150});
+                builder.setAutoCancel(true);
+
+                Notification notification= builder.build();
+                manager.notify(0, notification);
+
+            // weak test
+            } else if (cellNum == 7) {
+                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this);
+
+                builder.setSmallIcon(R.mipmap.icon_weak)
+                        .setTicker("진동 알림 발생")
+                        .setContentTitle("일어나세요.")
+                        .setContentText("일어서서 일분동안 몸을 움직이세요.")
+                        .extend(new NotificationCompat.WearableExtender().setBackground(
+                                BitmapFactory.decodeResource(getResources(), R.mipmap.social_weak)
+                        ));
+
+                builder.setVibrate(new long[]{0, 100, 140, 150, 700, 100, 140, 150, 700, 100, 140, 150});
+                builder.setAutoCancel(true);
+
+                Notification notification = builder.build();
+                manager.notify(0, notification);
+
+            } else if (cellNum == 8) {
+                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this);
+
+                builder.setSmallIcon(R.mipmap.icon_strong)
+                        .setTicker("진동 알림 발생")
+                        .setContentTitle("일어설 시간이야.")
+                        .setContentText("일어서서 일분동안 몸을 움직여 보자.")
+                        .extend(new NotificationCompat.WearableExtender().setBackground(
+                                BitmapFactory.decodeResource(getResources(), R.mipmap.social_strong)
+                        ));
+
+                builder.setVibrate(new long[]{0, 100, 140, 150, 700, 100, 140, 150, 700, 100, 140, 150});
+                builder.setAutoCancel(true);
+
+                Notification notification = builder.build();
+                manager.notify(0, notification);
+
+            // cancel button
+            } else if (cellNum == 9) {
+                EditText pw = (EditText) findViewById(R.id.editText);
+                if (pw.getText().toString().equals("0948")) {
+
+                    // 공통 처리: CELL 버튼 모두 enabled로 바꾸기. 터치한 버튼이라면 텍스트도 바꾸기.
+                    int[] buttonIds = {R.id.button1, R.id.button2, R.id.button3, R.id.button4, R.id.button5, R.id.button6};
+                    String[] buttonTexts = {"CELL 1", "CELL 2", "CELL 3", "CELL 4", "CELL 5", "CELL 6"};
+                    Button startButton;
+                    for (int i = 0; i < 6; i++) {
+                        startButton = (Button) findViewById(buttonIds[i]);
+                        startButton.setEnabled(true);
+                        startButton.setText(buttonTexts[i]);
+                        startButton.setBackgroundColor(Color.parseColor("#f4407d"));
+                    }
+
+                    // 취소 버튼 터치 불가능으로 바꾸기
+                    Button cancelButton = (Button) findViewById(R.id.button_cancel);
+                    cancelButton.setEnabled(false);
+                    cancelButton.setTextColor(Color.parseColor("#000000"));
+                    cancelButton.setTextSize(20);
+
+                    // 비밀번호 입력칸 비우기
+                    pw.setText("");
+                    pw.setEnabled(false);
+
+                    // 모든 알람 없애기
+                    PendingIntent[] sender = new PendingIntent[6];
+                    AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    Intent intent = new Intent(MainActivity.this, AlarmReceive.class);
+                    for (int i = 0; i < 6; i++) {
+                        sender[i] = PendingIntent.getBroadcast(MainActivity.this, i, intent, 0);
+                        am.cancel(sender[i]);
+                    }
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "모든 실험이 중단되었습니다", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                } else {
+                    pw.setText("");
+                    Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 틀림", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
                 }
-
-                // 취소 버튼 터치 불가능으로 바꾸기
-                Button cancelButton = (Button)findViewById(R.id.button_cancel);
-                cancelButton.setEnabled(false);
-                cancelButton.setTextColor(Color.parseColor("#000000"));
-                cancelButton.setTextSize(20);
-
-                // 비밀번호 입력칸 비우기
-                pw.setText("");
-                pw.setEnabled(false);
-
-                // 모든 알람 없애기
-                PendingIntent[] sender = new PendingIntent[6];
-                AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-                Intent intent = new Intent(MainActivity.this, AlarmReceive.class);
-                for(int i = 0; i < 6; i++) {
-                    sender[i] = PendingIntent.getBroadcast(MainActivity.this, i, intent, 0);
-                    am.cancel(sender[i]);
-                }
-
-                Toast toast = Toast.makeText(getApplicationContext(), "모든 실험이 중단되었습니다", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            } else {
-                pw.setText("");
-                Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 틀림", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
             }
         }
     }

@@ -68,7 +68,7 @@ public class AlarmReceive extends BroadcastReceiver {
         if (cellNum == 0) {
             // CELL 1: vibrations, messagesNone
             builder.setSmallIcon(R.mipmap.icon_none)
-                    .setTicker("진동 알림 발생")
+                    .setTicker(messagesNone[realIndex][0])
                     .setContentTitle(messagesNone[realIndex][0])
                     .setContentText(messagesNone[realIndex][1])
                     .extend(new NotificationCompat.WearableExtender().setBackground(
@@ -84,7 +84,7 @@ public class AlarmReceive extends BroadcastReceiver {
         } else if (cellNum == 1) {
             // CELL 2: vibrations, messagesWeak
             builder.setSmallIcon(R.mipmap.icon_weak)
-                    .setTicker("진동 알림 발생")
+                    .setTicker(messagesWeak[realIndex][0])
                     .setContentTitle(messagesWeak[realIndex][0])
                     .setContentText(messagesWeak[realIndex][1])
                     .extend(new NotificationCompat.WearableExtender().setBackground(
@@ -98,9 +98,25 @@ public class AlarmReceive extends BroadcastReceiver {
             Log.v("mth", "title: " + messagesWeak[realIndex][0]);
             Log.v("mth", "text: " + messagesWeak[realIndex][1]);
         } else if (cellNum == 2) {
+            // CELL 3: vibrations, messagesStrong
+            builder.setSmallIcon(R.mipmap.icon_strong)
+                    .setTicker(messagesStrong[realIndex][0])
+                    .setContentTitle(messagesStrong[realIndex][0])
+                    .setContentText(messagesStrong[realIndex][1])
+                    .extend(new NotificationCompat.WearableExtender().setBackground(
+                            BitmapFactory.decodeResource(context.getResources(), R.mipmap.social_strong)
+                    ));
+
+            builder.setVibrate(vibrations[realIndex]);
+            builder.setAutoCancel(true);
+
+            Log.v("mth", "all: " + temp.getAll().toString());
+            Log.v("mth", "title: " + messagesStrong[realIndex][0]);
+            Log.v("mth", "text: " + messagesStrong[realIndex][1]);
+        } else if (cellNum == 3) {
             // CELL 4: vibrationsNone1, messagesNone
             builder.setSmallIcon(R.mipmap.icon_none)
-                    .setTicker("진동 알림 발생")
+                    .setTicker(messagesNone[realIndex][0])
                     .setContentTitle(messagesNone[realIndex][0])
                     .setContentText(messagesNone[realIndex][1])
                     .extend(new NotificationCompat.WearableExtender().setBackground(
@@ -113,10 +129,10 @@ public class AlarmReceive extends BroadcastReceiver {
             Log.v("mth", "all: " + temp.getAll().toString());
             Log.v("mth", "title: " + messagesNone[realIndex][0]);
             Log.v("mth", "text: " + messagesNone[realIndex][1]);
-        } else if (cellNum == 3) {
+        } else if (cellNum == 4) {
             // CELL 5: vibrationsNone2, messagesWeak
             builder.setSmallIcon(R.mipmap.icon_weak)
-                    .setTicker("진동 알림 발생")
+                    .setTicker(messagesWeak[realIndex][0])
                     .setContentTitle(messagesWeak[realIndex][0])
                     .setContentText(messagesWeak[realIndex][1])
                     .extend(new NotificationCompat.WearableExtender().setBackground(
@@ -129,6 +145,22 @@ public class AlarmReceive extends BroadcastReceiver {
             Log.v("mth", "all: " + temp.getAll().toString());
             Log.v("mth", "title: " + messagesWeak[realIndex][0]);
             Log.v("mth", "text: " + messagesWeak[realIndex][1]);
+        } else if (cellNum == 5) {
+            // CELL 6: vibrationsNone3, messagesStrong
+            builder.setSmallIcon(R.mipmap.icon_strong)
+                    .setTicker(messagesStrong[realIndex][0])
+                    .setContentTitle(messagesStrong[realIndex][0])
+                    .setContentText(messagesStrong[realIndex][1])
+                    .extend(new NotificationCompat.WearableExtender().setBackground(
+                            BitmapFactory.decodeResource(context.getResources(), R.mipmap.social_strong)
+                    ));
+
+            builder.setVibrate(vibrationsNone3[realIndex]);
+            builder.setAutoCancel(true);
+
+            Log.v("mth", "all: " + temp.getAll().toString());
+            Log.v("mth", "title: " + messagesStrong[realIndex][0]);
+            Log.v("mth", "text: " + messagesStrong[realIndex][1]);
         }
 
         Notification notification= builder.build();
